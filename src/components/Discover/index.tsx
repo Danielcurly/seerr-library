@@ -1,3 +1,4 @@
+import { NovedadesSlider } from '@app/components/Biblioteca/Novedades';
 import Button from '@app/components/Common/Button';
 import ConfirmButton from '@app/components/Common/ConfirmButton';
 import LoadingSpinner from '@app/components/Common/LoadingSpinner';
@@ -208,6 +209,8 @@ const Discover = () => {
           </Transition>
         </>
       )}
+      {/* Biblioteca: novedades de las series que ve el usuario, lo primero */}
+      {!isEditing && <NovedadesSlider />}
       {(isEditing ? sliders : discoverData)?.map((slider, index) => {
         let sliderComponent: React.ReactNode;
 

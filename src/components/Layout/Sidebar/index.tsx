@@ -1,3 +1,4 @@
+import IconoBiblioteca from '@app/components/Biblioteca/IconoBiblioteca';
 import Badge from '@app/components/Common/Badge';
 import VersionStatus from '@app/components/Layout/VersionStatus';
 import useClickOutside from '@app/hooks/useClickOutside';
@@ -26,6 +27,7 @@ export const menuMessages = defineMessages('components.Layout.Sidebar', {
   browsemovies: 'Movies',
   browsetv: 'Series',
   requests: 'Requests',
+  biblioteca: 'Library',
   blocklist: 'Blocklist',
   issues: 'Issues',
   users: 'Users',
@@ -76,6 +78,12 @@ const SidebarLinks: SidebarLinkProps[] = [
     messagesKey: 'requests',
     svgIcon: <ClockIcon className="mr-3 h-6 w-6" />,
     activeRegExp: /^\/requests/,
+  },
+  {
+    href: '/biblioteca',
+    messagesKey: 'biblioteca',
+    svgIcon: <IconoBiblioteca className="mr-3 h-6 w-6" />,
+    activeRegExp: /^\/biblioteca/,
   },
   {
     href: '/blocklist',

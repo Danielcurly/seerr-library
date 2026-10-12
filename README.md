@@ -1,77 +1,72 @@
 <p align="center">
 <img src="./public/logo_full.svg" alt="Seerr" style="margin: 20px 0;">
 </p>
+
+# Seerr Library
+
+A fork of [Seerr](https://github.com/seerr-team/seerr) that adds a **Library** module for Jellyfin and Emby servers.
+
+Seerr manages what comes into your library. This fork also manages what leaves it: on a shared server, users rarely tell anyone they have finished with something, so disks fill up with titles nobody will watch again. Library lets users vote on what they no longer need, queues titles nobody watches, gives every queued title a visible countdown so anyone can keep it, and removes it through Radarr/Sonarr when the countdown ends. It also tells each user when new episodes of the shows they follow are available.
+
+Everything else is upstream Seerr, unchanged.
+
+## What this fork adds
+
+- **Browse**: the whole library, movies and individual seasons, with filters, size on disk, last playback and the reason a title is queued.
+- **Votes**: each user can mark a title _Not interested_, _Watch later_ or _Request removal_. Users with the Keep permission can mark it _Keep_, which takes it out of the queue.
+- **Pending Removal**: titles that will be removed, each with its countdown. A title enters the queue when a user requests its removal, when enough users are not interested, when nobody has played it for a configurable number of months, or when an administrator adds it.
+- **Pause while watching**: a queued season stops its countdown while someone is watching it.
+- **New Episodes**: for every show a user has been watching, the episodes and seasons released since they last watched, with links to play or request them. It keeps working after older seasons have been removed.
+- **Removal execution**, configurable:
+  - **Notify only**: nothing is removed; the Removal History records what would have been.
+  - **Remove with Radarr/Sonarr**: Seerr removes movies and single seasons itself, once a day.
+  - **External executor**: your own program removes titles through a documented [API](docs/library/external-executor.md).
+- **Torrents** (optional qBittorrent connection): keep them, remove them, or remove them once a minimum seeding ratio or time is reached.
+- **My Activity**, **Removal History** and a guided **How It Works** tour for new users.
+- English and Spanish translations.
+
 <p align="center">
-<img src="https://github.com/seerr-team/seerr/actions/workflows/release.yml/badge.svg" alt="Seerr Release" />
-<img src="https://github.com/seerr-team/seerr/actions/workflows/ci.yml/badge.svg" alt="Seerr CI">
+<img src="./public/biblioteca/tutorial/en/escritorio-4-sevan.webp" alt="Pending Removal" width="49%">
+<img src="./public/biblioteca/tutorial/en/escritorio-8-novedades.webp" alt="New Episodes" width="49%">
 </p>
-<p align="center">
-<a href="https://discord.gg/seerr"><img src="https://img.shields.io/discord/783137440809746482" alt="Discord"></a>
-<a href="https://hub.docker.com/r/seerr/seerr"><img src="https://img.shields.io/docker/pulls/seerr/seerr" alt="Docker pulls"></a>
-<a href="https://translate.seerr.dev/engage/seerr/"><img src="https://translate.seerr.dev/widget/seerr/svg-badge.svg" alt="Translation status" /></a>
-<a href="https://github.com/seerr-team/seerr/blob/develop/LICENSE"><img alt="GitHub" src="https://img.shields.io/github/license/seerr-team/seerr"></a>
 
-**Seerr** is a free and open source software application for managing requests for your media library. It integrates with the media server of your choice: [Jellyfin](https://jellyfin.org), [Plex](https://plex.tv), and [Emby](https://emby.media/). In addition, it integrates with your existing services, such as **[Sonarr](https://sonarr.tv/)**, **[Radarr](https://radarr.video/)**.
+Full documentation: [docs/library](docs/library/README.md).
 
-## Current Features
+## Requirements
 
-- Full Jellyfin/Emby/Plex integration including authentication with user import & management.
-- Support for **PostgreSQL** and **SQLite** databases.
-- Supports Movies, Shows and Mixed Libraries.
-- Ability to change email addresses for SMTP purposes.
-- Easy integration with your existing services. Currently, Seerr supports Sonarr and Radarr. More to come!
-- Jellyfin/Emby/Plex library scan, to keep track of the titles which are already available.
-- Customizable request system, which allows users to request individual seasons or movies in a friendly, easy-to-use interface.
-- Incredibly simple request management UI. Don't dig through the app to simply approve recent requests!
-- Granular permission system.
-- Support for various notification agents.
-- Mobile-friendly design, for when you need to approve requests on the go!
-- Support for watchlisting & blocklisting media.
+- Seerr with **Jellyfin or Emby**. Plex is not supported: playback history is read from Jellyfin/Emby.
+- **SQLite** database (the default). PostgreSQL is not supported by the module.
+- **Radarr and/or Sonarr** configured in Seerr.
+- **qBittorrent**, optional.
 
-With more features on the way! Check out our [issue tracker](/../../issues) to see the features which have already been requested.
+## Installation
 
-## Getting Started
+No prebuilt image is published. Build it from this repository:
 
-Check out our documentation for instructions on how to install and run Seerr:
+```sh
+git clone https://github.com/Danielcurly/seerr-library.git
+cd seerr-library
+docker build --build-arg COMMIT_TAG=library -t seerr-library .
+```
 
-https://docs.seerr.dev/getting-started/
+Then run it exactly like Seerr (port 5055, configuration in `/app/config`), replacing the image name. See the [Seerr documentation](https://docs.seerr.dev/getting-started/) for the rest of the options.
 
-## Preview
+**Switching from Seerr**: use your existing configuration folder. The module adds its own tables on first start and does not change existing data, but **back up the configuration folder first**. Then open **Library > Settings** as an administrator; new installations start in _Notify only_.
 
-<img src="./public/preview.jpg" alt="Seerr application preview" />
+## Other changes from upstream
 
-## Migrating from Overseerr/Jellyseerr to Seerr
+- When a request updates a series that already exists in Sonarr, Seerr also applies the _Monitor new items_ setting of that Sonarr server. Upstream applies it only when the series is first added.
 
-Read our [release announcement](https://docs.seerr.dev/blog/seerr-release) to learn what Seerr means for Jellyseerr and Overseerr users.
+## About Seerr
 
-Please follow our [migration guide](https://docs.seerr.dev/migration-guide) for detailed instructions on migrating from Overseerr or Jellyseerr.
+**Seerr** is a free and open source application for managing requests for your media library. It integrates with [Jellyfin](https://jellyfin.org), [Plex](https://plex.tv) and [Emby](https://emby.media/), and with services such as [Sonarr](https://sonarr.tv/) and [Radarr](https://radarr.video/).
 
-## Support
+- Upstream repository: https://github.com/seerr-team/seerr
+- Documentation: https://docs.seerr.dev
+- This fork is based on Seerr v3.5.0.
 
-- Check out the [Seerr Documentation](https://docs.seerr.dev) before asking for help. Your question might already be in the docs!
-- You can get support on [Discord](https://discord.gg/seerr).
-- You can ask questions in the Help category of our [GitHub Discussions](/../../discussions).
-- Bug reports and feature requests can be submitted via [GitHub Issues](/../../issues).
+Please report problems with the Library module in this repository, not upstream.
 
-## API Documentation
+## License
 
-You can access the API documentation from your local Seerr install at http://localhost:5055/api-docs
-
-## Community
-
-You can ask questions, share ideas, and more in [GitHub Discussions](/../../discussions).
-
-If you would like to chat with other members of our growing community, [join the Seerr Discord server](https://discord.gg/seerr)!
-
-Our [Code of Conduct](./CODE_OF_CONDUCT.md) applies to all Seerr community channels.
-
-## Contributing
-
-You can help improve Seerr too! Check out our [Contribution Guide](./CONTRIBUTING.md) to get started.
-
-## Contributors ✨
-
-[![Contributors](https://opencollective.com/seerr/contributors.svg?width=890)](https://opencollective.com/seerr/#backers)
-
-[![Become a Backer](https://opencollective.com/seerr/backers.svg)](https://opencollective.com/seerr/#backers)
-[![Become a Sponsor](https://opencollective.com/seerr/sponsors.svg)](https://opencollective.com/seerr/#sponsors)
+MIT, like upstream Seerr. See [LICENSE](./LICENSE).

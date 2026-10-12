@@ -1,3 +1,4 @@
+import IconoBiblioteca from '@app/components/Biblioteca/IconoBiblioteca';
 import Badge from '@app/components/Common/Badge';
 import { menuMessages } from '@app/components/Layout/Sidebar';
 import useClickOutside from '@app/hooks/useClickOutside';
@@ -98,6 +99,13 @@ const MobileMenu = ({
       svgIcon: <ClockIcon className="h-6 w-6" />,
       svgIconSelected: <FilledClockIcon className="h-6 w-6" />,
       activeRegExp: /^\/requests/,
+    },
+    {
+      href: '/biblioteca',
+      content: intl.formatMessage(menuMessages.biblioteca),
+      svgIcon: <IconoBiblioteca className="h-6 w-6" />,
+      svgIconSelected: <IconoBiblioteca className="h-6 w-6" relleno />,
+      activeRegExp: /^\/biblioteca/,
     },
     {
       href: '/blocklist',

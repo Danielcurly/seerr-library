@@ -5,6 +5,8 @@ import DiscoverSlider from '@server/entity/DiscoverSlider';
 import { Session } from '@server/entity/Session';
 import { User } from '@server/entity/User';
 import { initI18n } from '@server/i18n';
+import bibliotecaRoutes from '@server/biblioteca/routes';
+import { iniciarTareasBiblioteca } from '@server/biblioteca/tareas';
 import { startJobs } from '@server/job/schedule';
 import notificationManager from '@server/lib/notifications';
 import DiscordAgent from '@server/lib/notifications/agents/discord';
@@ -155,6 +157,7 @@ app
     const totalUsers = await userRepository.count();
     if (totalUsers > 0) {
       startJobs();
+      iniciarTareasBiblioteca();
     } else {
       logger.info(
         `Skipping starting the scheduled jobs as we have no Plex/Jellyfin/Emby servers setup yet`,
@@ -236,6 +239,7 @@ app
     const apiSpecContent = await fs.readFile(API_SPEC_PATH, 'utf-8');
     const apiDocs = yaml.load(apiSpecContent) as Record<string, unknown>;
     server.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiDocs));
+    server.use('/api/biblioteca', bibliotecaRoutes);
     server.use(
       OpenApiValidator.middleware({
         apiSpec: API_SPEC_PATH,

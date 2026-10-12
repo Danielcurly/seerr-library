@@ -1,3 +1,4 @@
+import { bibliotecaEntities } from '@server/biblioteca/entities';
 import { Blocklist } from '@server/entity/Blocklist';
 import DiscoverSlider from '@server/entity/DiscoverSlider';
 import Issue from '@server/entity/Issue';
@@ -39,6 +40,7 @@ const entities = [
   UserPushSubscription,
   UserSettings,
   Watchlist,
+  ...bibliotecaEntities,
 ];
 
 const subscribers = [

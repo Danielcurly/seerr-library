@@ -214,6 +214,9 @@ class SonarrAPI extends ServarrBase<{
       // If the series already exists, we will simply just update it
       if (series.id) {
         series.monitored = options.monitored ?? series.monitored;
+        // Biblioteca: las temporadas nuevas solo se bajan bajo demanda
+        series.monitorNewItems =
+          options.monitorNewItems ?? series.monitorNewItems;
         series.tags = options.tags
           ? Array.from(new Set([...series.tags, ...options.tags]))
           : series.tags;
